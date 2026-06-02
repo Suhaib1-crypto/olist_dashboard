@@ -158,21 +158,61 @@ p, label, div{
 """, unsafe_allow_html=True)
 # Interactive Control Center
 
-st.sidebar.header("🎛️ Interactive Control Center")
+st.sidebar.markdown("## 🎛️ Interactive Control Center")
 
-selected_payment = st.sidebar.selectbox(
-    "Payment Type",
-    df["payment_type"].dropna().unique()
+payment_filter = st.sidebar.multiselect(
+    "💳 Payment Methods",
+    options=sorted(df["payment_type"].dropna().unique()),
+    default=sorted(df["payment_type"].dropna().unique())
 )
 
-filtered_df = df[df["payment_type"] == selected_payment]
+review_filter = st.sidebar.multiselect(
+    "⭐ Review Scores",
+    options=sorted(df["review_score"].dropna().unique()),
+    default=sorted(df["review_score"].dropna().unique())
+)
+
+min_payment = float(df["payment_value"].min())
+max_payment = float(df["payment_value"].max())
+
+payment_range = st.sidebar.slider(
+    "💰 Revenue Range",
+    min_value=min_payment,
+    max_value=max_payment,
+    value=(min_payment, max_payment)
+)
+
+filtered_df = df[
+    (df["payment_type"].isin(payment_filter))
+    & (df["review_score"].isin(review_filter))
+    & (df["payment_value"] >= payment_range[0])
+    & (df["payment_value"] <= payment_range[1])
+]
+
+st.sidebar.markdown("---")
+st.sidebar.metric(
+    "Filtered Orders",
+    filtered_df["order_id"].nunique()
+)
+
+st.sidebar.metric(
+    "Filtered Revenue",
+    f"${filtered_df['payment_value'].sum():,.0f}"
+)
 # Dashboard Theme Engine
 
 st.markdown("""
 <style>
 
 AMAZON THEME CSS
+/* Sidebar Control Panel Styling */
 
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] label,
+section[data-testid="stSidebar"] p {
+    color: #D1D5DB !important;
+    font-weight: 600;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -192,10 +232,10 @@ Revenue • Customers • Orders • Payment Analytics
 
 ...
 
-total_orders = df["order_id"].nunique()
-total_revenue = df["payment_value"].sum()
-total_customers = df["customer_unique_id"].nunique()
-avg_review = df["review_score"].mean()
+total_orders = filtered_df["order_id"].nunique()
+total_revenue = filtered_df["payment_value"].sum()
+total_customers = filtered_df["customer_unique_id"].nunique()
+avg_review = filtered_df["review_score"].mean()
 
 col1, col2, col3, col4 = st.columns(4)
 
