@@ -156,7 +156,16 @@ p, label, div{
 
 </style>
 """, unsafe_allow_html=True)
+# Interactive Control Center
 
+st.sidebar.header("🎛️ Interactive Control Center")
+
+selected_payment = st.sidebar.selectbox(
+    "Payment Type",
+    df["payment_type"].dropna().unique()
+)
+
+filtered_df = df[df["payment_type"] == selected_payment]
 # Dashboard Theme Engine
 
 st.markdown("""
