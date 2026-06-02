@@ -203,24 +203,20 @@ st.sidebar.metric(
 
 st.markdown("""
 <style>
-/* Multiselect Dropdown Text */
+/* Dropdown Options Dark Text */
 
-.stMultiSelect div[data-baseweb="select"] {
+[data-baseweb="popover"] {
     color: black !important;
 }
 
-.stMultiSelect div[data-baseweb="select"] * {
+[data-baseweb="menu"] * {
     color: black !important;
 }
 
-div[role="listbox"] {
+[data-baseweb="select"] * {
     color: black !important;
 }
-
-div[role="option"] {
-    color: black !important;
-}
-AMAZON THEME CSS
+# AMAZON THEME CSS
 /* Sidebar Control Panel Styling */
 
 section[data-testid="stSidebar"] h2,
